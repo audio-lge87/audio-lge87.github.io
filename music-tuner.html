@@ -31,13 +31,167 @@
             width: 100%;
             height: 100%;
         }
+        button {
+            text-align: center;
+            text-align-last:center;
+            width: 20%;  
+        }
+        .startbutton {
+            text-align: center;
+            text-align-last:center;
+        }
     </style>
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function() {
+            const note_frequency = [
+                /* A0 - B0 */
+                27.5, 29.135235, 30.867706,
+                /* C1 - B1 */
+                32.703195, 34.647828, 36.708095, 38.890872, 41.203444, 43.653528, 
+                46.249302, 48.999429, 51.913087, 55, 58.27047, 61.735412, 
+                /* C2 - B2 */
+                65.406391, 69.295657, 73.416191, 77.781745, 82.406889, 87.307057, 
+                92.498605, 97.998858, 103.82617, 110, 116.54094, 123.47082, 
+                /* C3 - B3 */
+                130.812782, 138.591315, 146.832383, 155.563491, 164.813778, 174.614115, 
+                184.997211, 195.997717, 207.652348, 220.000000, 233.081880, 246.941650, 
+                /* C4 - B4 */
+                261.625565, 277.182630, 293.664767, 311.126983, 329.627556, 349.228231, 
+                369.994422, 391.995435, 415.304697, 440.000000, 466.163761, 493.883301, 
+                /* C5 - B5 */
+                523.251130, 554.365261, 587.329535, 622.253967, 659.255113, 698.456462, 
+                739.988845, 783.990871, 830.609395, 880.000000, 932.327523, 987.766602, 
+                /* C6 - B6 */
+                1046.502261, 1108.730523, 1174.659071, 1244.507934, 1318.510227, 1396.912925, 
+                1479.97769, 1567.981743, 1661.21879, 1760, 1864.655046, 1975.533205, 
+                /* C7 - B7 */
+                2093.004522, 2217.461047, 2349.318143, 2489.015869, 2637.020455, 2793.825851, 
+                2959.955381, 3135.963487, 3322.43758, 3520, 3729.310092, 3951.06641, 
+                /* C8 */
+                4186.009044
+            ];
+
+            const note_name = [                              
+                "A0", "A#0", "B0", 
+                "C1", "C#1", "D1","D#1", "E1", "F1", "F#1", "G1", "G#1", "A1", "A#1", "B1", 
+                "C2", "C#2", "D2","D#2", "E2", "F2", "F#2", "G2", "G#2", "A2", "A#2", "B2", 
+                "C3", "C#3", "D3","D#3", "E3", "F3", "F#3", "G3", "G#3", "A3", "A#3", "B3", 
+                "C4", "C#4", "D4","D#4", "E4", "F4", "F#4", "G4", "G#4", "A4", "A#4", "B4", 
+                "C5", "C#5", "D5","D#5", "E5", "F5", "F#5", "G5", "G#5", "A5", "A#5", "B5", 
+                "C6", "C#6", "D6","D#6", "E6", "F6", "F#6", "G6", "G#6", "A6", "A#6", "B6", 
+                "C7", "C#7", "D7","D#7", "E7", "F7", "F#7", "G7", "G#7", "A7", "A#7", "B7", 
+                "C8"
+            ];
+            
+            // Implement click response
+            const webstart = document.getElementById("webstart");
+            const F0_list = document.getElementById("F0_bench_list");
+            const F0_set = document.getElementById("F0_bench");
+
+            let redball = document.getElementById("redball");
+            
+            // Implement send message action
+            webstart.addEventListener('click', WebSocketTest);
+            
+            // Compute F0 from recv message
+            
+            // Display F0 value and note name on page
+
+            // Functions
+            function WebSocketTest() {
+
+                let tmp = 0;
+                if ("WebSocket" in window) {
+                    console.log("WebSocket is supported!");
+                    
+                    // Init websocket connection
+                    // var ws = new WebSocket("ws://echo.websocket.org");
+                    var ws = new WebSocket("ws://192.168.1.101:8001/demo-tuner");
+                    // var ws = new WebSocket("ws://localhost:8000/demo-tuner");
+
+                    ws.onopen = function() {
+                        console.log("WebSocket connection established!");
+                        ws.send("tuner");
+                    };
+
+                    ws.onmessage = function (evt) {
+                        let received_msg = evt.data;
+                        let F0 = AS_compute_F0_peaks_method(received_msg);
+                        F0_set.textContent = note_frequency[F0_list.selectedIndex] + ' Hz'
+                        let F0_bench = note_frequency[F0_list.selectedIndex];
+
+                        let freq_dif = F0 - F0_bench;
+                        if (F0 === -1) {
+                            freq_dif = -100;
+                        } else if (freq_dif >= 100) {
+                            freq_dif = 100;
+                        } else if (freq_dif <= -100) {
+                            freq_dif = -100;
+                        }
+                        let moving = 'translate(' + freq_dif + ', 0)';
+                        redball.setAttribute('transform', moving);
+                    };
+
+                    ws.onclose = function() { 
+                        // websocket is closed.
+                        console.log("Connection is closed..."); 
+                    };
+
+                } else {
+                    console.log("WebSocket NOT supported!");
+                }
+            }
+
+            function AS_compute_F0_peaks_method(json_string) {
+                
+                // F0.textContent = 12.345;
+
+                let json_object = JSON.parse(json_string);
+
+                // implement signal processing
+                // retrieve intermediate information from json data
+                let frame_energy = json_object.energy;
+                let frame_k_peaks = json_object.K_PEAKS;
+                let frame_peaks_freq = json_object.peaks_freq;
+                let frame_peaks_value = json_object.peaks_value;
+
+                if (frame_energy > 10) {
+                    let index_max = 0;
+                    let value_max = frame_peaks_value[index_max];
+                    for (var i = 1; i < frame_k_peaks; i++) {
+                        if (frame_peaks_value[i] > value_max) {
+                           index_max = i;
+                           value_max = frame_peaks_value[index_max];
+                        }
+                    }
+                    return frame_peaks_freq[index_max];
+                }
+                return -1;
+            }
+
+            function AS_convert_frequency_to_note_name(freq) {
+                if (freq < 0) {
+                    return "n/a";
+                } else {
+                    let freq_index = 0;
+                    let freq_dif = Math.abs(freq - note_frequency[freq_index]);
+                    for (let i = 1; i < note_name.length; i++) {
+                        if (Math.abs(freq - note_frequency[i]) < freq_dif) {
+                            freq_dif = Math.abs(freq - note_frequency[i]);
+                            freq_index = i;
+                        }
+                    }
+                    return note_name[freq_index];
+                }
+            }
+        });
+    </script>
   </head>
   <body>
     <p align="left"><a href="index.html">return</a></p>
     <p><hr></p>
     <form class="demo-form">
-      <select class="demo-notes-list">
+      <select class="demo-notes-list" id="F0_bench_list">
         <option value="A0">A0</option>
         <option value="A#0">A#0</option>
         <option value="B0">B0</option>
@@ -129,13 +283,13 @@
       </select>
     </form>
 
-    <center><p>BELOW: place animation of frequency input vs. standard</p></center>
+    <center><p id="F0_bench">261.625565 Hz</p></center>
 
     <div id="figure">
         <?xml version="1.0" encoding="utf-8"?>
         <!-- Generator: Adobe Illustrator 21.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-        <svg version="1.1" id="scales" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-             viewBox="0 0 200 100" style="enable-background:new 0 0 200 100;" xml:space="preserve" width="35vmin">
+        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+             viewBox="0 0 200 100" style="enable-background:new 0 0 200 100;" xml:space="preserve">
         <style type="text/css">
             .st0{fill:none;stroke:#000000;stroke-width:1.005;stroke-miterlimit:10;}
             .st1{fill:none;stroke:#000000;stroke-width:0.7152;stroke-miterlimit:10;}
@@ -143,6 +297,7 @@
             .st3{stroke:#000000;stroke-width:1.0114;stroke-miterlimit:10;}
             .st4{font-family:'MyriadPro-Regular';}
             .st5{font-size:12px;}
+            .st6{fill:#FF0000;stroke:#ED2024;stroke-width:1.248;stroke-miterlimit:10;}
         </style>
         <line class="st0" x1="0" y1="80" x2="200" y2="80"/>
         <line class="st1" x1="80" y1="80" x2="80" y2="40"/>
@@ -155,20 +310,14 @@
         <line class="st2" x1="180" y1="80" x2="180" y2="30"/>
         <rect x="98" class="st3" width="4" height="80"/>
         <text transform="matrix(1 0 0 1 76.3335 94.333)" class="st4 st5">Frequency</text>
-        </svg>
-    </div> 
+        <circle id="redball" class="st6" cx="100" cy="80" r="5"/>
+        </svg>  
+    </div>
 
-    <div id="redball">
-        <?xml version="1.0" encoding="utf-8"?>
-        <!-- Generator: Adobe Illustrator 21.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-        <svg version="1.1" id="target" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-             viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
-        <style type="text/css">
-            .st0{fill:#FF0000;stroke:#FF0000;stroke-width:0.2375;stroke-miterlimit:10;}
-        </style>
-        <circle class="st0" cx="10" cy="10" r="9.5"/>
-        </svg>
-    </div> 
+    <div class="startbutton">
+        <button id="webstart">Start Tuner</button>
+    </div>
+    
     
     <footer class="demo-footer">
       <p>©Copyright 2018 SMiT. All rights reversed.</p>
