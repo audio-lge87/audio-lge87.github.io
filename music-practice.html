@@ -33,21 +33,53 @@
 				width: 100%;
 				height: 100%;
 			}
+			#svg-part {
+				text-align: center;
+				text-align-last:center;
+				width: 100%;
+			}
 		</style>
+		<script type="text/javascript">
+			document.addEventListener("DOMContentLoaded", function() {
+				const start_pause_button = document.getElementById("myButton1");
+				const svg_object = document.getElementById("svg-object");
+				const song_name = document.getElementById("song-name");
+			
+				song_name.addEventListener("change", load_selected_music_svg);
+				start_pause_button.addEventListener("click", toggle_start_pause);
+
+				function toggle_start_pause() {
+					if ("Start" === start_pause_button.value) {
+						start_pause_button.value = "Pause";
+					} else if ("Pause" === start_pause_button.value) {
+						start_pause_button.value = "Start";
+					}
+				}
+
+				function load_selected_music_svg() {
+					let svg_file = song_name.options[song_name.selectedIndex].value;
+					console.log(svg_file);
+					// Re-load music svg
+					svg_object.setAttribute("data", svg_file);
+				}	
+			});
+		</script>
 	</head>
 	<body>
 		<p align="left"><a href="index.html">return</a></p>
 		<p><hr></p>
 
+		<!-- Top control panel -->
 		<div id="container">
 
 		  	<div id="left">
 			    <form>
-					<select class="demo-song-list">
-						<option value="0">Select music</option>
-						<option value="Piano 1">Piano 1</option>
-						<option value="Guitar 1">Guitar 1</option>
-						<option value="Snare Drum 1">Snare Drum 1</option>
+					<select class="demo-song-list" id="song-name">
+						<option value="svg/logo.svg">Select music</option>
+						<option value="svg/piano-C-Scale-Right.svg">Piano - C Scale Right Hand</option>
+						<option value="svg/piano-C-Scale-Left.svg">Piano - C Scale Left Hand</option>
+						<option value="svg/piano-You-Are-My-Sunshine.svg">Piano - You Are My Sunchine</option>
+						<option value="svg/piano-Bach-Minuet.svg">Piano - Bach Minuet</option>
 					</select>
 				</form>
 			</div>
@@ -67,24 +99,20 @@
 			</div>
 
 			<div id="right">
-			    <input class="button-play" onclick="change()" type="button" value="Start" id="myButton1" />
+			    <input class="button-play" type="button" value="Start" id="myButton1" />
 			</div>
 		</div>
 
-		<center><p>BELOW: Place sheet music svg<br>IMPLEMENT music/incoming data match/compare logic</p></center>
-		<iframe height="100%" width="100%"></iframe>
+		<!-- Music SVG display -->
+		<div id="svg-part">
+			<object id="svg-object" type="image/svg+xml" data="svg/logo.svg" width="500vmin">
+				Your browser does not support SVG
+			</object>
+		</div>
 
+		<!-- Footer -->
 		<footer class="demo-footer">
 			<p>©Copyright 2018 SMiT. All rights reversed.</p>
 		</footer>
 	</body>
-	<script type="text/javascript">
-		function change()
-			{
-				if (document.getElementById("myButton1").value=="Start")
-					document.getElementById("myButton1").value="Pause";
-				else if (document.getElementById("myButton1").value=="Pause")
-					document.getElementById("myButton1").value="Start"
-			}
-	</script>
 </html>
