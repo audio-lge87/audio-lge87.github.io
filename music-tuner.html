@@ -92,12 +92,17 @@
             
             // Implement send message action
             webstart.addEventListener('click', WebSocketTest);
+            F0_list.addEventListener('change', loadFrequency);
             
             // Compute F0 from recv message
             
             // Display F0 value and note name on page
 
             // Functions
+            function loadFrequency() {
+                F0_set.textContent = note_frequency[F0_list.selectedIndex] + ' Hz'
+            }
+
             function WebSocketTest() {
 
                 let tmp = 0;
@@ -117,7 +122,6 @@
                     ws.onmessage = function (evt) {
                         let received_msg = evt.data;
                         let F0 = AS_compute_F0_peaks_method(received_msg);
-                        F0_set.textContent = note_frequency[F0_list.selectedIndex] + ' Hz'
                         let F0_bench = note_frequency[F0_list.selectedIndex];
 
                         let freq_dif = F0 - F0_bench;
