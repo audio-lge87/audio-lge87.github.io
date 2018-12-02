@@ -111,7 +111,7 @@
                     
                     // Init websocket connection
                     // var ws = new WebSocket("ws://echo.websocket.org");
-                    var ws = new WebSocket("ws://192.168.1.101:8001/demo-tuner");
+                    var ws = new WebSocket("ws://192.168.0.103:8000/demo-tuner");
                     // var ws = new WebSocket("ws://localhost:8000/demo-tuner");
 
                     ws.onopen = function() {
@@ -159,7 +159,7 @@
                 let frame_peaks_freq = json_object.peaks_freq;
                 let frame_peaks_value = json_object.peaks_value;
 
-                if (frame_energy > 10) {
+                if (frame_energy > 5) {
                     let index_max = 0;
                     let value_max = frame_peaks_value[index_max];
                     for (var i = 1; i < frame_k_peaks; i++) {
