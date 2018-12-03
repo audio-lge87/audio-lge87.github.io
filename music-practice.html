@@ -1,118 +1,118 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<meta name="author" content="Liang Ge">
-		<meta name="description" content="Music Demo App Practice">
-		<title>Music Practice</title>
-		<style>
-			.demo-footer {
-				position:absolute;
-				bottom: 0em;
-				text-align: center;
-    			width: 100%;
-			}
-			#container {height: 100%; width:100%; font-size:0;}
-			#left, #middle, #right {display: inline-block; *display: inline; zoom: 1; vertical-align: top; font-size: 20px;}
-			#left {text-align: left; width: 33%; background: white;}
-			#middle {text-align: center; width: 34%; background: white;}
-			#right {text-align: right; width: 33%; background: white;}
-			.demo-song-list {
-				text-align: center;
-				text-align-last:center;
-        		width: 100%;
-        		height: 100%;
-			}
-			.demo-tempo-list {
-				text-align: center;
-				text-align-last:center;
-        		width: 100%;
-        		height: 100%;
-			}
-			.button-play {
-				width: 100%;
-				height: 100%;
-			}
-			#svg-part {
-				text-align: center;
-				text-align-last:center;
-				width: 100%;
-			}
-		</style>
-		<script type="text/javascript">
-			document.addEventListener("DOMContentLoaded", function() {
-				const start_pause_button = document.getElementById("myButton1");
-				const svg_object = document.getElementById("svg-object");
-				const song_name = document.getElementById("song-name");
-			
-				song_name.addEventListener("change", load_selected_music_svg);
-				start_pause_button.addEventListener("click", toggle_start_pause);
+<head>
+	<meta charset="utf-8">
+	<meta name="author" content="Liang Ge">
+	<meta name="description" content="Music Demo App Practice">
+	<title>Music Practice</title>
+	<style>
+		.demo-footer {
+			position:absolute;
+			bottom: 0em;
+			text-align: center;
+			width: 100%;
+		}
+		#container {height: 100%; width:100%; font-size:0;}
+		#left, #middle, #right {display: inline-block; *display: inline; zoom: 1; vertical-align: top; font-size: 20px;}
+		#left {text-align: left; width: 33%; background: white;}
+		#middle {text-align: center; width: 34%; background: white;}
+		#right {text-align: right; width: 33%; background: white;}
+		.demo-song-list {
+			text-align: center;
+			text-align-last:center;
+    		width: 100%;
+    		height: 100%;
+		}
+		.demo-tempo-list {
+			text-align: center;
+			text-align-last:center;
+    		width: 100%;
+    		height: 100%;
+		}
+		.button-play {
+			width: 100%;
+			height: 100%;
+		}
+		#svg-part {
+			text-align: center;
+			text-align-last:center;
+			width: 100%;
+		}
+	</style>
+	<script type="text/javascript">
+		document.addEventListener("DOMContentLoaded", function() {
+			const start_pause_button = document.getElementById("myButton1");
+			const svg_object = document.getElementById("svg-object");
+			const song_name = document.getElementById("song-name");
+		
+			song_name.addEventListener("change", load_selected_music_svg);
+			start_pause_button.addEventListener("click", toggle_start_pause);
 
-				function toggle_start_pause() {
-					if ("Start" === start_pause_button.value) {
-						start_pause_button.value = "Pause";
-					} else if ("Pause" === start_pause_button.value) {
-						start_pause_button.value = "Start";
-					}
+			function toggle_start_pause() {
+				if ("Start" === start_pause_button.value) {
+					start_pause_button.value = "Pause";
+				} else if ("Pause" === start_pause_button.value) {
+					start_pause_button.value = "Start";
 				}
+			}
 
-				function load_selected_music_svg() {
-					let svg_file = song_name.options[song_name.selectedIndex].value;
-					console.log(svg_file);
-					// Re-load music svg
-					svg_object.setAttribute("data", svg_file);
-				}	
-			});
-		</script>
-	</head>
-	<body>
-		<p align="left"><a href="index.html">return</a></p>
-		<p><hr></p>
+			function load_selected_music_svg() {
+				let svg_file = song_name.options[song_name.selectedIndex].value;
+				console.log(svg_file);
+				// Re-load music svg
+				svg_object.setAttribute("data", svg_file);
+			}	
+		});
+	</script>
+</head>
+<body>
+	<p align="left"><a href="index.html">return</a></p>
+	<p><hr></p>
 
-		<!-- Top control panel -->
-		<div id="container">
+	<!-- Top control panel -->
+	<div id="container">
 
-		  	<div id="left">
-			    <form>
-					<select class="demo-song-list" id="song-name">
-						<option value="svg/logo.svg">Select music</option>
-						<option value="svg/piano-C-Scale-Right.svg">Piano - C Scale Right Hand</option>
-						<option value="svg/piano-C-Scale-Left.svg">Piano - C Scale Left Hand</option>
-						<option value="svg/piano-You-Are-My-Sunshine.svg">Piano - You Are My Sunchine</option>
-						<option value="svg/piano-Bach-Minuet.svg">Piano - Bach Minuet</option>
-					</select>
-				</form>
-			</div>
-
-			<div id="middle">
-			    <form>
-					<select class="demo-tempo-list">
-						<option value="0">Select bpm</option>
-						<option value="45">45</option>
-						<option value="60">60</option>
-						<option value="72">72</option>
-						<option value="90">90</option>
-						<option value="108">108</option>
-						<option value="120">120</option>
-					</select>
-				</form>
-			</div>
-
-			<div id="right">
-			    <input class="button-play" type="button" value="Start" id="myButton1" />
-			</div>
+	  	<div id="left">
+		    <form>
+				<select class="demo-song-list" id="song-name">
+					<option value="svg/logo.svg">Select music</option>
+					<option value="svg/piano-C-Scale-Right.svg">Piano - C Scale Right Hand</option>
+					<option value="svg/piano-C-Scale-Left.svg">Piano - C Scale Left Hand</option>
+					<option value="svg/piano-You-Are-My-Sunshine.svg">Piano - You Are My Sunchine</option>
+					<option value="svg/piano-Bach-Minuet.svg">Piano - Bach Minuet</option>
+				</select>
+			</form>
 		</div>
 
-		<!-- Music SVG display -->
-		<div id="svg-part">
-			<object id="svg-object" type="image/svg+xml" data="svg/logo.svg" width="1000vmin">
-				Your browser does not support SVG
-			</object>
+		<div id="middle">
+		    <form>
+				<select class="demo-tempo-list">
+					<option value="0">Select bpm</option>
+					<option value="45">45</option>
+					<option value="60">60</option>
+					<option value="72">72</option>
+					<option value="90">90</option>
+					<option value="108">108</option>
+					<option value="120">120</option>
+				</select>
+			</form>
 		</div>
 
-		<!-- Footer -->
-		<footer class="demo-footer">
-			<p>©Copyright 2018 SMiT. All rights reversed.</p>
-		</footer>
-	</body>
+		<div id="right">
+		    <input class="button-play" type="button" value="Start" id="myButton1" />
+		</div>
+	</div>
+
+	<!-- Music SVG display -->
+	<div id="svg-part">
+		<object id="svg-object" type="image/svg+xml" data="svg/logo.svg" width="1000vmin">
+			Your browser does not support SVG
+		</object>
+	</div>
+
+	<!-- Footer -->
+	<!-- <footer class="demo-footer">
+		<p>©Copyright 2018 SMiT. All rights reversed.</p>
+	</footer> -->
+</body>
 </html>

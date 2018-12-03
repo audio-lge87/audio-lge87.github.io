@@ -2,9 +2,115 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<meta charset="utf-8">
 	<title>Music Metronome</title>
+	<style type="text/css">
+		.demo-footer {
+			position:absolute;
+			bottom: 0em;
+			text-align: center;
+			width: 100%;
+		}
+		#container {height: 100%; width:100%; font-size:0;}
+		#left, #middle, #right {display: inline-block; *display: inline; zoom: 1; vertical-align: top; font-size: 20px;}
+		#left {text-align: left; width: 33%; background: white;}
+		#middle {text-align: center; width: 34%; background: white;}
+		#right {text-align: right; width: 33%; background: white;}
+		.demo-tempo-list {
+			text-align: center;
+			text-align-last:center;
+    		width: 100%;
+    		height: 100%;
+		}
+		.demo-rhythm-list {
+			text-align: center;
+			text-align-last:center;
+    		width: 100%;
+    		height: 100%;
+		}
+		.button-play {
+			width: 100%;
+			height: 100%;
+		}
+	</style>
+	<script type="text/javascript">
+		document.addEventListener("DOMContentLoaded", function() {
+			const start_stop_button = document.getElementById("myButton1");
+			const bpm = document.getElementById("bpm-list");
+			let intervalID = null;
+			let beepInterval = null;
+			let audio = null;
+			var AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.oAudioContext
+
+			start_stop_button.addEventListener("click", toggle_start_stop);
+			start_stop_button.addEventListener("click", toggle_beep_play_stop);
+
+			function toggle_start_stop() {
+				if ("Start" === start_stop_button.value) {
+					start_stop_button.value = "Stop";
+				} else if ("Stop" === start_stop_button.value) {
+					start_stop_button.value = "Start";
+				}
+			}
+
+			function toggle_beep_play_stop() {
+				if ("Stop" === start_stop_button.value) {
+					let bpm_value = bpm.options[bpm.selectedIndex].value;
+					beepInterval = 60.0 / bpm_value * 1000;
+					intervalID = setInterval(beep, beepInterval);
+				} else if ("Start" === start_stop_button.value) {
+					clearInterval(intervalID);
+				}
+			}
+
+			function beep() {
+				audio = new AudioContext();
+				let osc = audio.createOscillator();
+				osc.type = "sine";
+				osc.frequency.value = 440.0;
+
+				osc.connect(audio.destination);
+				osc.start(audio.currentTime);
+				osc.stop(audio.currentTime + 0.05);
+				console.log("beep");
+			}
+		});
+	</script>
 </head>
 <body>
-	Metronome
+	<p align="left"><a href="index.html">return</a></p>
+    <p><hr></p>
+
+   	<div id="container">
+   		<div id="left">
+   			<form>
+				<select class="demo-tempo-list" id="bpm-list">
+					<option value="45">45</option>
+					<option value="60" selected="selected">60</option>
+					<option value="72">72</option>
+					<option value="90">90</option>
+					<option value="108">108</option>
+					<option value="120">120</option>
+				</select>
+			</form>
+   		</div>
+   		<div id="middle">
+   			<form>
+				<select class="demo-rhythm-list">
+					<option value="1">2 / 4</option>
+					<option value="2">3 / 4</option>
+					<option value="3" selected="selected">4 / 4</option>
+					<option value="4">6 / 8</option>
+				</select>
+			</form>
+   		</div>
+   		<div id="right">
+   			<input class="button-play" type="button" value="Start" id="myButton1" />
+   		</div>
+   	</div>
+
+    <footer class="demo-footer">
+		<p>©Copyright 2018 SMiT. All rights reversed.</p>
+	</footer>
 </body>
 </html>
