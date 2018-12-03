@@ -40,32 +40,41 @@
 			let intervalID = null;
 			let beepInterval = null;
 			let audio = null;
-			var AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.oAudioContext
+			var AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.oAudioContext;
+			let osc = null;
+
+			audio = new AudioContext();
 
 			start_stop_button.addEventListener("click", toggle_start_stop);
-			start_stop_button.addEventListener("click", toggle_beep_play_stop);
+			// start_stop_button.addEventListener("click", toggle_beep_play_stop);
 
 			function toggle_start_stop() {
 				if ("Start" === start_stop_button.value) {
 					start_stop_button.value = "Stop";
-				} else if ("Stop" === start_stop_button.value) {
-					start_stop_button.value = "Start";
-				}
-			}
-
-			function toggle_beep_play_stop() {
-				if ("Stop" === start_stop_button.value) {
 					let bpm_value = bpm.options[bpm.selectedIndex].value;
 					beepInterval = 60.0 / bpm_value * 1000;
 					intervalID = setInterval(beep, beepInterval);
-				} else if ("Start" === start_stop_button.value) {
+				} else if ("Stop" === start_stop_button.value) {
+					start_stop_button.value = "Start";
 					clearInterval(intervalID);
 				}
 			}
 
+			// function toggle_beep_play_stop() {
+			// 	if ("Stop" === start_stop_button.value) {
+			// 		let bpm_value = bpm.options[bpm.selectedIndex].value;
+			// 		beepInterval = 60.0 / bpm_value * 1000;
+			// 		intervalID = setInterval(beep, beepInterval);
+			// 	} else if ("Start" === start_stop_button.value) {
+			// 		clearInterval(intervalID);
+			// 	}
+			// }
+
 			function beep() {
-				audio = new AudioContext();
-				let osc = audio.createOscillator();
+				if (audio === null) {
+					console.log("null audio");
+				}
+				osc = audio.createOscillator();
 				osc.type = "sine";
 				osc.frequency.value = 440.0;
 
