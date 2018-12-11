@@ -37,22 +37,39 @@
 		document.addEventListener("DOMContentLoaded", function() {
 			const start_stop_button = document.getElementById("myButton1");
 			const bpm = document.getElementById("bpm-list");
+			const beat_info = document.getElementById("beat_info");
 			let intervalID = null;
 			let beepInterval = null;
 			let audio = null;
 			var AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.oAudioContext;
 			let osc = null;
+			let beat = 4;
+			let beat_type = 4;
+			let count = 0;
 
 			audio = new AudioContext();
 
 			start_stop_button.addEventListener("click", toggle_start_stop);
-			// start_stop_button.addEventListener("click", toggle_beep_play_stop);
 
 			function toggle_start_stop() {
 				if ("Start" === start_stop_button.value) {
 					start_stop_button.value = "Stop";
+					if (beat_info.options[beat_info.selectedIndex].value == 1) {
+						beat = 2
+						beat_type = 4
+					} else if (beat_info.options[beat_info.selectedIndex].value == 2) {
+						beat = 3
+						beat_type = 4
+					} else if (beat_info.options[beat_info.selectedIndex].value == 3) {
+						beat = 4
+						beat_type = 4
+					} else if (beat_info.options[beat_info.selectedIndex].value == 4) {
+						beat = 6
+						beat_type = 8
+					}
+					count = 0
 					let bpm_value = bpm.options[bpm.selectedIndex].value;
-					beepInterval = 60.0 / bpm_value * 1000;
+					beepInterval = 60.0 / bpm_value * 1000 / (beat_type/4);
 					intervalID = setInterval(beep, beepInterval);
 				} else if ("Stop" === start_stop_button.value) {
 					start_stop_button.value = "Start";
@@ -60,28 +77,28 @@
 				}
 			}
 
-			// function toggle_beep_play_stop() {
-			// 	if ("Stop" === start_stop_button.value) {
-			// 		let bpm_value = bpm.options[bpm.selectedIndex].value;
-			// 		beepInterval = 60.0 / bpm_value * 1000;
-			// 		intervalID = setInterval(beep, beepInterval);
-			// 	} else if ("Start" === start_stop_button.value) {
-			// 		clearInterval(intervalID);
-			// 	}
-			// }
-
 			function beep() {
 				if (audio === null) {
 					console.log("null audio");
 				}
 				osc = audio.createOscillator();
 				osc.type = "sine";
-				osc.frequency.value = 440.0;
+				if (count == 0) {
+					osc.frequency.value = 880.0;
+				}
+				else {
+					osc.frequency.value = 440.0;
+				}
 
 				osc.connect(audio.destination);
 				osc.start(audio.currentTime);
 				osc.stop(audio.currentTime + 0.05);
 				console.log("beep");
+
+				count++;
+				if (count >= beat){
+					count = 0;
+				}
 			}
 		});
 	</script>
@@ -105,7 +122,7 @@
    		</div>
    		<div id="middle">
    			<form>
-				<select class="demo-rhythm-list">
+				<select class="demo-rhythm-list" id="beat_info">
 					<option value="1">2 / 4</option>
 					<option value="2">3 / 4</option>
 					<option value="3" selected="selected">4 / 4</option>
